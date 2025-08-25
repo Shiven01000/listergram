@@ -1,24 +1,17 @@
 import { useEffect } from 'react';
 import { router } from 'expo-router';
-import { View, ActivityIndicator } from 'react-native';
-import { useAuth } from '@/contexts/AuthContext';
+import { View, ActivityIndicator, Text } from 'react-native';
 
 export default function Index() {
-  const { session, loading } = useAuth();
-
   useEffect(() => {
-    if (!loading) {
-      if (session) {
-        router.replace('/(tabs)');
-      } else {
-        router.replace('/(auth)');
-      }
-    }
-  }, [session, loading]);
+    // For now, just go to auth
+    router.replace('/(auth)');
+  }, []);
 
   return (
-    <View className="flex-1 justify-center items-center bg-gray-50">
+    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#f9fafb' }}>
       <ActivityIndicator size="large" color="#158b4b" />
+      <Text style={{ marginTop: 16, fontSize: 16, color: '#6b7280' }}>Loading Listergram...</Text>
     </View>
   );
 }

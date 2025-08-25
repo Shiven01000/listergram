@@ -1,5 +1,4 @@
 import { Tabs } from 'expo-router';
-import { Home, Video, Calendar, Heart, User } from 'lucide-react-native';
 
 export default function TabLayout() {
   return (
@@ -27,7 +26,7 @@ export default function TabLayout() {
         options={{
           title: 'Home',
           tabBarIcon: ({ size, color }) => (
-            <Home size={size} color={color} />
+            <Text style={{ fontSize: size, color }}>🏠</Text>
           ),
         }}
       />
@@ -36,7 +35,7 @@ export default function TabLayout() {
         options={{
           title: 'Reels',
           tabBarIcon: ({ size, color }) => (
-            <Video size={size} color={color} />
+            <Text style={{ fontSize: size, color }}>🎬</Text>
           ),
         }}
       />
@@ -45,7 +44,7 @@ export default function TabLayout() {
         options={{
           title: 'Events',
           tabBarIcon: ({ size, color }) => (
-            <Calendar size={size} color={color} />
+            <Text style={{ fontSize: size, color }}>📅</Text>
           ),
         }}
       />
@@ -54,7 +53,7 @@ export default function TabLayout() {
         options={{
           title: 'Connect',
           tabBarIcon: ({ size, color }) => (
-            <Heart size={size} color={color} />
+            <Text style={{ fontSize: size, color }}>💕</Text>
           ),
         }}
       />
@@ -63,7 +62,7 @@ export default function TabLayout() {
         options={{
           title: 'Profile',
           tabBarIcon: ({ size, color }) => (
-            <User size={size} color={color} />
+            <Text style={{ fontSize: size, color }}>👤</Text>
           ),
         }}
       />
