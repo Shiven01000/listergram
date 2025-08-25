@@ -2,15 +2,11 @@ import React from 'react';
 import { View, Text, TouchableOpacity, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
-import { LinearGradient } from 'expo-linear-gradient';
 
 export default function WelcomeScreen() {
   return (
     <SafeAreaView className="flex-1">
-      <LinearGradient
-        colors={['#158b4b', '#0f7a3f']}
-        className="flex-1"
-      >
+      <View className="flex-1 bg-gradient-to-b from-primary-500 to-primary-600" style={{ backgroundColor: '#158b4b' }}>
         <View className="flex-1 justify-center items-center px-8">
           <View className="items-center mb-12">
             <Text className="text-6xl font-bold text-white mb-4">
@@ -48,7 +44,7 @@ export default function WelcomeScreen() {
             Exclusive to University of Alberta students living in Lister Residence
           </Text>
         </View>
-      </LinearGradient>
+      </View>
     </SafeAreaView>
   );
 }
