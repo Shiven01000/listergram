@@ -30,6 +30,7 @@
     "web": {
       "bundler": "metro",
       "output": "static"
-    }
+    },
+    "sdkVersion": "53.0.0"
   }
 }
