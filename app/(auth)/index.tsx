@@ -9,6 +9,7 @@ import {
   Platform,
   Alert,
   ActivityIndicator,
+  StyleSheet,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
@@ -27,13 +28,11 @@ export default function AuthScreen() {
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState<'signin' | 'signup'>('signin');
 
-  // Sign In Form State
   const [signInData, setSignInData] = useState({
     email: '',
     password: ''
   });
 
-  // Sign Up Form State
   const [signUpData, setSignUpData] = useState({
     email: '',
     password: '',
@@ -71,7 +70,6 @@ export default function AuthScreen() {
   const handleSignUp = async () => {
     setLoading(true);
 
-    // Validation
     if (!validateUofAEmail(signUpData.email)) {
       Alert.alert("Invalid Email", "Please use your @ualberta.ca email address.");
       setLoading(false);
@@ -86,12 +84,6 @@ export default function AuthScreen() {
 
     if (signUpData.password.length < 6) {
       Alert.alert("Weak Password", "Password must be at least 6 characters long.");
-      setLoading(false);
-      return;
-    }
-
-    if (signUpData.floor < 1 || signUpData.floor > 20) {
-      Alert.alert("Invalid Floor", "Floor must be between 1 and 20.");
       setLoading(false);
       return;
     }
@@ -117,37 +109,37 @@ export default function AuthScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-gradient-to-br from-primary/20 to-secondary/20">
+    <SafeAreaView style={styles.container}>
       <KeyboardAvoidingView 
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        className="flex-1"
+        style={styles.keyboardView}
       >
-        <ScrollView className="flex-1 px-6 py-8">
+        <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
           {/* Header */}
-          <View className="items-center mb-8">
-            <View className="flex-row items-center mb-4">
+          <View style={styles.header}>
+            <View style={styles.logoContainer}>
               <Ionicons name="school" size={32} color="#158b4b" />
-              <Text className="text-3xl font-bold text-primary ml-2">Listergram</Text>
+              <Text style={styles.logoText}>Listergram</Text>
             </View>
-            <Text className="text-xl font-semibold text-gray-800">Lister Hall Community</Text>
-            <Text className="text-gray-600 mt-1">Connect with fellow UofA students</Text>
+            <Text style={styles.subtitle}>Lister Hall Community</Text>
+            <Text style={styles.description}>Connect with fellow UofA students</Text>
           </View>
 
           {/* Tab Selector */}
-          <View className="flex-row bg-gray-100 rounded-lg p-1 mb-6">
+          <View style={styles.tabContainer}>
             <TouchableOpacity
-              className={`flex-1 py-3 rounded-md ${activeTab === 'signin' ? 'bg-white shadow-sm' : ''}`}
+              style={[styles.tab, activeTab === 'signin' && styles.activeTab]}
               onPress={() => setActiveTab('signin')}
             >
-              <Text className={`text-center font-medium ${activeTab === 'signin' ? 'text-gray-900' : 'text-gray-600'}`}>
+              <Text style={[styles.tabText, activeTab === 'signin' && styles.activeTabText]}>
                 Sign In
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
-              className={`flex-1 py-3 rounded-md ${activeTab === 'signup' ? 'bg-white shadow-sm' : ''}`}
+              style={[styles.tab, activeTab === 'signup' && styles.activeTab]}
               onPress={() => setActiveTab('signup')}
             >
-              <Text className={`text-center font-medium ${activeTab === 'signup' ? 'text-gray-900' : 'text-gray-600'}`}>
+              <Text style={[styles.tabText, activeTab === 'signup' && styles.activeTabText]}>
                 Sign Up
               </Text>
             </TouchableOpacity>
@@ -155,11 +147,11 @@ export default function AuthScreen() {
 
           {/* Sign In Form */}
           {activeTab === 'signin' && (
-            <View className="space-y-4">
-              <View>
-                <Text className="text-sm font-medium text-gray-700 mb-2">University Email</Text>
+            <View style={styles.form}>
+              <View style={styles.inputGroup}>
+                <Text style={styles.label}>University Email</Text>
                 <TextInput
-                  className="bg-white border border-gray-300 rounded-lg px-4 py-3 text-base"
+                  style={styles.input}
                   placeholder="your.name@ualberta.ca"
                   value={signInData.email}
                   onChangeText={(text) => setSignInData(prev => ({ ...prev, email: text }))}
@@ -167,10 +159,10 @@ export default function AuthScreen() {
                   autoCapitalize="none"
                 />
               </View>
-              <View>
-                <Text className="text-sm font-medium text-gray-700 mb-2">Password</Text>
+              <View style={styles.inputGroup}>
+                <Text style={styles.label}>Password</Text>
                 <TextInput
-                  className="bg-white border border-gray-300 rounded-lg px-4 py-3 text-base"
+                  style={styles.input}
                   placeholder="Password"
                   value={signInData.password}
                   onChangeText={(text) => setSignInData(prev => ({ ...prev, password: text }))}
@@ -178,14 +170,14 @@ export default function AuthScreen() {
                 />
               </View>
               <TouchableOpacity
-                className="bg-primary rounded-lg py-4 items-center"
+                style={styles.button}
                 onPress={handleSignIn}
                 disabled={loading}
               >
                 {loading ? (
                   <ActivityIndicator color="white" />
                 ) : (
-                  <Text className="text-white font-semibold text-base">Sign In</Text>
+                  <Text style={styles.buttonText}>Sign In</Text>
                 )}
               </TouchableOpacity>
             </View>
@@ -193,21 +185,21 @@ export default function AuthScreen() {
 
           {/* Sign Up Form */}
           {activeTab === 'signup' && (
-            <View className="space-y-4">
-              <View className="flex-row space-x-3">
-                <View className="flex-1">
-                  <Text className="text-sm font-medium text-gray-700 mb-2">Full Name</Text>
+            <View style={styles.form}>
+              <View style={styles.row}>
+                <View style={[styles.inputGroup, styles.halfWidth]}>
+                  <Text style={styles.label}>Full Name</Text>
                   <TextInput
-                    className="bg-white border border-gray-300 rounded-lg px-4 py-3 text-base"
+                    style={styles.input}
                     placeholder="John Doe"
                     value={signUpData.fullName}
                     onChangeText={(text) => setSignUpData(prev => ({ ...prev, fullName: text }))}
                   />
                 </View>
-                <View className="flex-1">
-                  <Text className="text-sm font-medium text-gray-700 mb-2">Username</Text>
+                <View style={[styles.inputGroup, styles.halfWidth]}>
+                  <Text style={styles.label}>Username</Text>
                   <TextInput
-                    className="bg-white border border-gray-300 rounded-lg px-4 py-3 text-base"
+                    style={styles.input}
                     placeholder="john_doe123"
                     value={signUpData.username}
                     onChangeText={(text) => setSignUpData(prev => ({ ...prev, username: text }))}
@@ -216,10 +208,10 @@ export default function AuthScreen() {
                 </View>
               </View>
 
-              <View>
-                <Text className="text-sm font-medium text-gray-700 mb-2">University Email</Text>
+              <View style={styles.inputGroup}>
+                <Text style={styles.label}>University Email</Text>
                 <TextInput
-                  className="bg-white border border-gray-300 rounded-lg px-4 py-3 text-base"
+                  style={styles.input}
                   placeholder="your.name@ualberta.ca"
                   value={signUpData.email}
                   onChangeText={(text) => setSignUpData(prev => ({ ...prev, email: text }))}
@@ -228,21 +220,21 @@ export default function AuthScreen() {
                 />
               </View>
 
-              <View className="flex-row space-x-3">
-                <View className="flex-1">
-                  <Text className="text-sm font-medium text-gray-700 mb-2">Password</Text>
+              <View style={styles.row}>
+                <View style={[styles.inputGroup, styles.halfWidth]}>
+                  <Text style={styles.label}>Password</Text>
                   <TextInput
-                    className="bg-white border border-gray-300 rounded-lg px-4 py-3 text-base"
+                    style={styles.input}
                     placeholder="Password"
                     value={signUpData.password}
                     onChangeText={(text) => setSignUpData(prev => ({ ...prev, password: text }))}
                     secureTextEntry
                   />
                 </View>
-                <View className="flex-1">
-                  <Text className="text-sm font-medium text-gray-700 mb-2">Confirm Password</Text>
+                <View style={[styles.inputGroup, styles.halfWidth]}>
+                  <Text style={styles.label}>Confirm Password</Text>
                   <TextInput
-                    className="bg-white border border-gray-300 rounded-lg px-4 py-3 text-base"
+                    style={styles.input}
                     placeholder="Confirm Password"
                     value={signUpData.confirmPassword}
                     onChangeText={(text) => setSignUpData(prev => ({ ...prev, confirmPassword: text }))}
@@ -251,13 +243,14 @@ export default function AuthScreen() {
                 </View>
               </View>
 
-              <View className="flex-row space-x-3">
-                <View className="flex-1">
-                  <Text className="text-sm font-medium text-gray-700 mb-2">Tower</Text>
-                  <View className="bg-white border border-gray-300 rounded-lg">
+              <View style={styles.row}>
+                <View style={[styles.inputGroup, styles.halfWidth]}>
+                  <Text style={styles.label}>Tower</Text>
+                  <View style={styles.pickerContainer}>
                     <Picker
                       selectedValue={signUpData.tower}
                       onValueChange={(value) => setSignUpData(prev => ({ ...prev, tower: value }))}
+                      style={styles.picker}
                     >
                       <Picker.Item label="Select tower" value="" />
                       {towers.map(tower => (
@@ -266,10 +259,10 @@ export default function AuthScreen() {
                     </Picker>
                   </View>
                 </View>
-                <View className="flex-1">
-                  <Text className="text-sm font-medium text-gray-700 mb-2">Floor</Text>
+                <View style={[styles.inputGroup, styles.halfWidth]}>
+                  <Text style={styles.label}>Floor</Text>
                   <TextInput
-                    className="bg-white border border-gray-300 rounded-lg px-4 py-3 text-base"
+                    style={styles.input}
                     placeholder="Floor"
                     value={signUpData.floor.toString()}
                     onChangeText={(text) => setSignUpData(prev => ({ ...prev, floor: parseInt(text) || 1 }))}
@@ -278,12 +271,13 @@ export default function AuthScreen() {
                 </View>
               </View>
 
-              <View>
-                <Text className="text-sm font-medium text-gray-700 mb-2">Program</Text>
-                <View className="bg-white border border-gray-300 rounded-lg">
+              <View style={styles.inputGroup}>
+                <Text style={styles.label}>Program</Text>
+                <View style={styles.pickerContainer}>
                   <Picker
                     selectedValue={signUpData.program}
                     onValueChange={(value) => setSignUpData(prev => ({ ...prev, program: value }))}
+                    style={styles.picker}
                   >
                     <Picker.Item label="Select program" value="" />
                     {programs.map(program => (
@@ -293,12 +287,13 @@ export default function AuthScreen() {
                 </View>
               </View>
 
-              <View>
-                <Text className="text-sm font-medium text-gray-700 mb-2">Year of Study</Text>
-                <View className="bg-white border border-gray-300 rounded-lg">
+              <View style={styles.inputGroup}>
+                <Text style={styles.label}>Year of Study</Text>
+                <View style={styles.pickerContainer}>
                   <Picker
                     selectedValue={signUpData.yearOfStudy}
                     onValueChange={(value) => setSignUpData(prev => ({ ...prev, yearOfStudy: value }))}
+                    style={styles.picker}
                   >
                     <Picker.Item label="Select year" value="" />
                     {yearOptions.map(year => (
@@ -309,14 +304,14 @@ export default function AuthScreen() {
               </View>
 
               <TouchableOpacity
-                className="bg-primary rounded-lg py-4 items-center mt-6"
+                style={[styles.button, styles.signUpButton]}
                 onPress={handleSignUp}
                 disabled={loading}
               >
                 {loading ? (
                   <ActivityIndicator color="white" />
                 ) : (
-                  <Text className="text-white font-semibold text-base">Create Account</Text>
+                  <Text style={styles.buttonText}>Create Account</Text>
                 )}
               </TouchableOpacity>
             </View>
@@ -326,3 +321,123 @@ export default function AuthScreen() {
     </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#f8fafc',
+  },
+  keyboardView: {
+    flex: 1,
+  },
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    padding: 24,
+  },
+  header: {
+    alignItems: 'center',
+    marginBottom: 32,
+  },
+  logoContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  logoText: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: '#158b4b',
+    marginLeft: 8,
+  },
+  subtitle: {
+    fontSize: 20,
+    fontWeight: '600',
+    color: '#1f2937',
+  },
+  description: {
+    fontSize: 16,
+    color: '#6b7280',
+    marginTop: 4,
+  },
+  tabContainer: {
+    flexDirection: 'row',
+    backgroundColor: '#f1f5f9',
+    borderRadius: 8,
+    padding: 4,
+    marginBottom: 24,
+  },
+  tab: {
+    flex: 1,
+    paddingVertical: 12,
+    borderRadius: 6,
+    alignItems: 'center',
+  },
+  activeTab: {
+    backgroundColor: 'white',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 2,
+  },
+  tabText: {
+    fontWeight: '500',
+    color: '#6b7280',
+  },
+  activeTabText: {
+    color: '#1f2937',
+  },
+  form: {
+    gap: 16,
+  },
+  row: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  inputGroup: {
+    flex: 1,
+  },
+  halfWidth: {
+    flex: 0.5,
+  },
+  label: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: '#374151',
+    marginBottom: 8,
+  },
+  input: {
+    backgroundColor: 'white',
+    borderWidth: 1,
+    borderColor: '#d1d5db',
+    borderRadius: 8,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    fontSize: 16,
+  },
+  pickerContainer: {
+    backgroundColor: 'white',
+    borderWidth: 1,
+    borderColor: '#d1d5db',
+    borderRadius: 8,
+  },
+  picker: {
+    height: 50,
+  },
+  button: {
+    backgroundColor: '#158b4b',
+    borderRadius: 8,
+    paddingVertical: 16,
+    alignItems: 'center',
+  },
+  signUpButton: {
+    marginTop: 8,
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+});

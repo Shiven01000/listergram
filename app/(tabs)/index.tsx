@@ -7,6 +7,7 @@ import {
   Image,
   FlatList,
   Dimensions,
+  StyleSheet,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
@@ -17,7 +18,6 @@ const { width } = Dimensions.get('window');
 interface StoryUser {
   id: string;
   name: string;
-  avatar: string;
   hasStory: boolean;
   isViewed: boolean;
 }
@@ -27,7 +27,6 @@ interface Post {
   user: {
     name: string;
     username: string;
-    avatar: string;
     tower: string;
     floor: number;
   };
@@ -40,11 +39,11 @@ interface Post {
 }
 
 const mockStories: StoryUser[] = [
-  { id: "1", name: "Your Story", avatar: "", hasStory: false, isViewed: false },
-  { id: "2", name: "Alex M.", avatar: "", hasStory: true, isViewed: false },
-  { id: "3", name: "Emma K.", avatar: "", hasStory: true, isViewed: true },
-  { id: "4", name: "Jake P.", avatar: "", hasStory: true, isViewed: false },
-  { id: "5", name: "Maya S.", avatar: "", hasStory: true, isViewed: true },
+  { id: "1", name: "Your Story", hasStory: false, isViewed: false },
+  { id: "2", name: "Alex M.", hasStory: true, isViewed: false },
+  { id: "3", name: "Emma K.", hasStory: true, isViewed: true },
+  { id: "4", name: "Jake P.", hasStory: true, isViewed: false },
+  { id: "5", name: "Maya S.", hasStory: true, isViewed: true },
 ];
 
 const mockPosts: Post[] = [
@@ -53,7 +52,6 @@ const mockPosts: Post[] = [
     user: {
       name: "Sarah Chen",
       username: "sarahc_uofa",
-      avatar: "",
       tower: "Henday",
       floor: 7,
     },
@@ -69,7 +67,6 @@ const mockPosts: Post[] = [
     user: {
       name: "Marcus Johnson",
       username: "marcus.j",
-      avatar: "",
       tower: "Mackenzie",
       floor: 12,
     },
@@ -99,46 +96,44 @@ export default function FeedScreen() {
   };
 
   const renderStoryItem = ({ item }: { item: StoryUser }) => (
-    <TouchableOpacity className="items-center mr-4">
-      <View className={`w-16 h-16 rounded-full p-0.5 ${
-        item.hasStory && !item.isViewed 
-          ? 'bg-gradient-to-r from-lister-gold to-accent-light' 
-          : item.isViewed 
-          ? 'bg-gray-300' 
-          : 'bg-gray-200'
-      }`}>
-        <View className="w-full h-full rounded-full bg-white items-center justify-center">
+    <TouchableOpacity style={styles.storyItem}>
+      <View style={[
+        styles.storyAvatar,
+        item.hasStory && !item.isViewed && styles.storyAvatarUnviewed,
+        item.isViewed && styles.storyAvatarViewed
+      ]}>
+        <View style={styles.storyAvatarInner}>
           {item.name === "Your Story" ? (
             <Ionicons name="camera" size={24} color="#64748b" />
           ) : (
-            <Text className="text-lg font-semibold text-primary">
+            <Text style={styles.storyAvatarText}>
               {item.name.charAt(0)}
             </Text>
           )}
         </View>
       </View>
-      <Text className="text-xs text-gray-600 mt-1 max-w-[60px] text-center" numberOfLines={1}>
+      <Text style={styles.storyName} numberOfLines={1}>
         {item.name}
       </Text>
     </TouchableOpacity>
   );
 
   const renderPost = ({ item }: { item: Post }) => (
-    <View className="bg-white mb-4">
+    <View style={styles.post}>
       {/* Post Header */}
-      <View className="flex-row items-center justify-between px-4 py-3">
-        <View className="flex-row items-center">
-          <View className="w-10 h-10 rounded-full bg-primary items-center justify-center">
-            <Text className="text-white font-semibold text-sm">
+      <View style={styles.postHeader}>
+        <View style={styles.postUserInfo}>
+          <View style={styles.postAvatar}>
+            <Text style={styles.postAvatarText}>
               {item.user.name.split(' ').map(n => n[0]).join('')}
             </Text>
           </View>
-          <View className="ml-3">
-            <View className="flex-row items-center">
-              <Text className="font-semibold text-sm">{item.user.username}</Text>
-              <Text className="text-gray-500 text-xs ml-2">• {item.timestamp}</Text>
+          <View style={styles.postUserDetails}>
+            <View style={styles.postUserRow}>
+              <Text style={styles.postUsername}>{item.user.username}</Text>
+              <Text style={styles.postTimestamp}>• {item.timestamp}</Text>
             </View>
-            <Text className="text-xs text-gray-500">
+            <Text style={styles.postLocation}>
               {item.user.tower} Tower, Floor {item.user.floor}
             </Text>
           </View>
@@ -151,25 +146,25 @@ export default function FeedScreen() {
       {/* Post Image */}
       <Image 
         source={{ uri: item.image }}
-        className="w-full aspect-square"
+        style={styles.postImage}
         resizeMode="cover"
       />
 
       {/* Post Actions */}
-      <View className="px-4 py-3">
-        <View className="flex-row items-center justify-between mb-3">
-          <View className="flex-row items-center space-x-4">
-            <TouchableOpacity onPress={() => handleLike(item.id)}>
+      <View style={styles.postActions}>
+        <View style={styles.postActionButtons}>
+          <View style={styles.postActionLeft}>
+            <TouchableOpacity onPress={() => handleLike(item.id)} style={styles.actionButton}>
               <Ionicons 
                 name={item.isLiked ? "heart" : "heart-outline"} 
                 size={24} 
                 color={item.isLiked ? "#ef4444" : "#64748b"} 
               />
             </TouchableOpacity>
-            <TouchableOpacity>
+            <TouchableOpacity style={styles.actionButton}>
               <Ionicons name="chatbubble-outline" size={24} color="#64748b" />
             </TouchableOpacity>
-            <TouchableOpacity>
+            <TouchableOpacity style={styles.actionButton}>
               <Ionicons name="paper-plane-outline" size={24} color="#64748b" />
             </TouchableOpacity>
           </View>
@@ -179,15 +174,15 @@ export default function FeedScreen() {
         </View>
 
         {/* Post Stats */}
-        <Text className="font-semibold text-sm mb-1">
+        <Text style={styles.postLikes}>
           {item.likes} likes
         </Text>
-        <Text className="text-sm">
-          <Text className="font-semibold">{item.user.username}</Text>
-          <Text className="text-gray-800"> {item.caption}</Text>
+        <Text style={styles.postCaption}>
+          <Text style={styles.postCaptionUsername}>{item.user.username}</Text>
+          <Text style={styles.postCaptionText}> {item.caption}</Text>
         </Text>
         {item.comments > 0 && (
-          <Text className="text-sm text-gray-500 mt-1">
+          <Text style={styles.postComments}>
             View all {item.comments} comments
           </Text>
         )}
@@ -196,10 +191,10 @@ export default function FeedScreen() {
   );
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <SafeAreaView style={styles.container}>
       {/* Header */}
-      <View className="flex-row items-center justify-between px-4 py-3 border-b border-gray-200">
-        <Text className="text-xl font-bold text-primary">Listergram</Text>
+      <View style={styles.header}>
+        <Text style={styles.headerTitle}>Listergram</Text>
         <TouchableOpacity onPress={signOut}>
           <Ionicons name="log-out-outline" size={24} color="#64748b" />
         </TouchableOpacity>
@@ -210,14 +205,14 @@ export default function FeedScreen() {
         renderItem={renderPost}
         keyExtractor={(item) => item.id}
         ListHeaderComponent={
-          <View className="border-b border-gray-200 py-4">
+          <View style={styles.storiesContainer}>
             <FlatList
               data={mockStories}
               renderItem={renderStoryItem}
               keyExtractor={(item) => item.id}
               horizontal
               showsHorizontalScrollIndicator={false}
-              contentContainerStyle={{ paddingHorizontal: 16 }}
+              contentContainerStyle={styles.storiesContent}
             />
           </View>
         }
@@ -226,3 +221,157 @@ export default function FeedScreen() {
     </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: 'white',
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#e5e7eb',
+  },
+  headerTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#158b4b',
+  },
+  storiesContainer: {
+    borderBottomWidth: 1,
+    borderBottomColor: '#e5e7eb',
+    paddingVertical: 16,
+  },
+  storiesContent: {
+    paddingHorizontal: 16,
+  },
+  storyItem: {
+    alignItems: 'center',
+    marginRight: 16,
+  },
+  storyAvatar: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    padding: 2,
+    backgroundColor: '#e5e7eb',
+  },
+  storyAvatarUnviewed: {
+    backgroundColor: '#f59e0b',
+  },
+  storyAvatarViewed: {
+    backgroundColor: '#9ca3af',
+  },
+  storyAvatarInner: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 30,
+    backgroundColor: 'white',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  storyAvatarText: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#158b4b',
+  },
+  storyName: {
+    fontSize: 12,
+    color: '#6b7280',
+    marginTop: 4,
+    maxWidth: 60,
+    textAlign: 'center',
+  },
+  post: {
+    backgroundColor: 'white',
+    marginBottom: 16,
+  },
+  postHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+  },
+  postUserInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  postAvatar: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#158b4b',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  postAvatarText: {
+    color: 'white',
+    fontWeight: '600',
+    fontSize: 14,
+  },
+  postUserDetails: {
+    marginLeft: 12,
+  },
+  postUserRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  postUsername: {
+    fontWeight: '600',
+    fontSize: 14,
+  },
+  postTimestamp: {
+    color: '#6b7280',
+    fontSize: 12,
+    marginLeft: 8,
+  },
+  postLocation: {
+    fontSize: 12,
+    color: '#6b7280',
+  },
+  postImage: {
+    width: '100%',
+    aspectRatio: 1,
+  },
+  postActions: {
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+  },
+  postActionButtons: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 12,
+  },
+  postActionLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  actionButton: {
+    marginRight: 16,
+  },
+  postLikes: {
+    fontWeight: '600',
+    fontSize: 14,
+    marginBottom: 4,
+  },
+  postCaption: {
+    fontSize: 14,
+  },
+  postCaptionUsername: {
+    fontWeight: '600',
+  },
+  postCaptionText: {
+    color: '#1f2937',
+  },
+  postComments: {
+    fontSize: 14,
+    color: '#6b7280',
+    marginTop: 4,
+  },
+});

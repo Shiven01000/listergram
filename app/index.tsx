@@ -1,31 +1,25 @@
-import { View, Text, StyleSheet } from 'react-native';
+import { useEffect } from 'react';
+import { useRouter } from 'expo-router';
+import { View, ActivityIndicator } from 'react-native';
+import { useAuth } from '../contexts/AuthContext';
 
 export default function Index() {
+  const { user, loading } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!loading) {
+      if (user) {
+        router.replace('/(tabs)');
+      } else {
+        router.replace('/(auth)');
+      }
+    }
+  }, [user, loading]);
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Listergram</Text>
-      <Text style={styles.subtitle}>Welcome to Lister Hall Community</Text>
+    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#158b4b' }}>
+      <ActivityIndicator size="large" color="white" />
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 20,
-  },
-  title: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    color: '#158b4b',
-    marginBottom: 8,
-  },
-  subtitle: {
-    fontSize: 18,
-    color: '#64748b',
-    textAlign: 'center',
-  },
-});
