@@ -18,6 +18,10 @@ export default {
 			}
 		},
 		extend: {
+			fontFamily: {
+				inter: ['Inter', 'sans-serif'],
+				poppins: ['Poppins', 'sans-serif'],
+			},
 			colors: {
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
@@ -26,7 +30,9 @@ export default {
 				foreground: 'hsl(var(--foreground))',
 				primary: {
 					DEFAULT: 'hsl(var(--primary))',
-					foreground: 'hsl(var(--primary-foreground))'
+					foreground: 'hsl(var(--primary-foreground))',
+					light: 'hsl(var(--primary-light))',
+					glow: 'hsl(var(--primary-glow))'
 				},
 				secondary: {
 					DEFAULT: 'hsl(var(--secondary))',
@@ -42,7 +48,8 @@ export default {
 				},
 				accent: {
 					DEFAULT: 'hsl(var(--accent))',
-					foreground: 'hsl(var(--accent-foreground))'
+					foreground: 'hsl(var(--accent-foreground))',
+					light: 'hsl(var(--accent-light))'
 				},
 				popover: {
 					DEFAULT: 'hsl(var(--popover))',
@@ -61,6 +68,17 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				// Listergram specific colors
+				lister: {
+					gold: 'hsl(var(--lister-gold))',
+					green: 'hsl(var(--lister-green))',
+					blue: 'hsl(var(--lister-blue))'
+				},
+				social: {
+					like: 'hsl(var(--like-red))',
+					online: 'hsl(var(--online-indicator))',
+					notification: 'hsl(var(--notification-badge))'
 				}
 			},
 			borderRadius: {
@@ -84,11 +102,62 @@ export default {
 					to: {
 						height: '0'
 					}
+				},
+				'heart-beat': {
+					'0%': { transform: 'scale(1)' },
+					'14%': { transform: 'scale(1.3)' },
+					'28%': { transform: 'scale(1)' },
+					'42%': { transform: 'scale(1.3)' },
+					'70%': { transform: 'scale(1)' }
+				},
+				'slide-up': {
+					'from': {
+						opacity: '0',
+						transform: 'translateY(20px)'
+					},
+					'to': {
+						opacity: '1',
+						transform: 'translateY(0)'
+					}
+				},
+				'scale-in': {
+					'from': {
+						opacity: '0',
+						transform: 'scale(0.95)'
+					},
+					'to': {
+						opacity: '1',
+						transform: 'scale(1)'
+					}
+				},
+				'swipe-right': {
+					'to': {
+						transform: 'translateX(100vw) rotate(30deg)',
+						opacity: '0'
+					}
+				},
+				'swipe-left': {
+					'to': {
+						transform: 'translateX(-100vw) rotate(-30deg)',
+						opacity: '0'
+					}
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				'heart-beat': 'heart-beat 0.6s ease-in-out',
+				'slide-up': 'slide-up 0.5s ease-out',
+				'scale-in': 'scale-in 0.3s ease-out',
+				'swipe-right': 'swipe-right 0.6s ease-in-out forwards',
+				'swipe-left': 'swipe-left 0.6s ease-in-out forwards'
+			},
+			aspectRatio: {
+				'story': '9 / 16',
+				'post': '1 / 1'
+			},
+			backdropBlur: {
+				xs: '2px'
 			}
 		}
 	},
