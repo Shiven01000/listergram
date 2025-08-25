@@ -1,22 +1,31 @@
-import { useEffect } from 'react';
-import { Redirect } from 'expo-router';
-import { useAuth } from '../contexts/AuthContext';
-import { View, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 
 export default function Index() {
-  const { user, loading } = useAuth();
-
-  if (loading) {
-    return (
-      <View className="flex-1 bg-white items-center justify-center">
-        <ActivityIndicator size="large" color="#158b4b" />
-      </View>
-    );
-  }
-
-  if (user) {
-    return <Redirect href="/(tabs)" />;
-  }
-
-  return <Redirect href="/(auth)" />;
+  return (
+    <View style={styles.container}>
+      <Text style={styles.title}>Listergram</Text>
+      <Text style={styles.subtitle}>Welcome to Lister Hall Community</Text>
+    </View>
+  );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 20,
+  },
+  title: {
+    fontSize: 32,
+    fontWeight: 'bold',
+    color: '#158b4b',
+    marginBottom: 8,
+  },
+  subtitle: {
+    fontSize: 18,
+    color: '#64748b',
+    textAlign: 'center',
+  },
+});
