@@ -5,6 +5,7 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "userInterfaceStyle": "automatic",
+    "scheme": "listergram",
     "icon": "./assets/icon.svg",
     "splash": {
       "image": "./assets/splash.svg",
@@ -16,16 +17,27 @@
     ],
     "ios": {
       "supportsTablet": false,
-      "bundleIdentifier": "com.listergram.app"
+      "bundleIdentifier": "com.listergram.app",
+      "infoPlist": {
+        "NSAppTransportSecurity": {
+          "NSAllowsArbitraryLoads": true
+        }
+      }
     },
     "android": {
-      "package": "com.listergram.app"
+      "package": "com.listergram.app",
+      "permissions": [
+        "android.permission.INTERNET"
+      ]
     },
     "plugins": [
       "expo-router"
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "web": {
+      "bundler": "metro"
     }
   }
 }
