@@ -1,44 +1,15 @@
 import { useState } from "react";
-import { Settings, Edit, Grid, Bookmark, Heart, MessageCircle, Share, MoreHorizontal } from "lucide-react";
+import { Settings, Edit, Grid, Bookmark, Heart, MessageCircle, Share, MapPin, GraduationCap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useProfile } from "@/hooks/useProfile";
+import { useAuth } from "@/contexts/AuthContext";
 import heroImage from "@/assets/listergram-hero.jpg";
 import listerTowers from "@/assets/lister-towers.jpg";
-
-interface UserProfile {
-  name: string;
-  username: string;
-  bio: string;
-  avatar: string;
-  tower: string;
-  floor: number;
-  program: string;
-  year: string;
-  role: string;
-  followers: number;
-  following: number;
-  posts: number;
-  interests: string[];
-}
-
-const mockUser: UserProfile = {
-  name: "Sarah Chen",
-  username: "sarahc_uofa",
-  bio: "3rd year Engineering student 👩‍💻 Floor Captain @ Henday 7 🏠 Coffee addict ☕ Always down for study sessions and late-night convos! #ListerLife",
-  avatar: "",
-  tower: "Henday",
-  floor: 7,
-  program: "Computer Engineering",
-  year: "3rd Year",
-  role: "Floor Captain",
-  followers: 234,
-  following: 189,
-  posts: 47,
-  interests: ["Coffee", "Coding", "Photography", "Study Groups", "Hiking", "Movies"]
-};
 
 const mockPosts = [
   { id: "1", image: heroImage, likes: 42, comments: 8 },
@@ -50,7 +21,56 @@ const mockPosts = [
 ];
 
 export const ProfileScreen = () => {
+  const { user } = useAuth();
+  const { profile, loading } = useProfile();
   const [activeTab, setActiveTab] = useState<'posts' | 'saved'>('posts');
+
+  if (loading) {
+    return (
+      <div className="w-full bg-background p-6 space-y-6">
+        <div className="flex items-start space-x-6">
+          <Skeleton className="w-20 h-20 rounded-full" />
+          <div className="flex-1 space-y-3">
+            <div className="space-y-2">
+              <Skeleton className="h-6 w-32" />
+              <Skeleton className="h-4 w-24" />
+            </div>
+            <div className="flex space-x-6">
+              <div className="text-center space-y-1">
+                <Skeleton className="h-6 w-8" />
+                <Skeleton className="h-3 w-12" />
+              </div>
+              <div className="text-center space-y-1">
+                <Skeleton className="h-6 w-8" />
+                <Skeleton className="h-3 w-12" />
+              </div>
+              <div className="text-center space-y-1">
+                <Skeleton className="h-6 w-8" />
+                <Skeleton className="h-3 w-12" />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="space-y-3">
+          <Skeleton className="h-4 w-full" />
+          <Skeleton className="h-4 w-3/4" />
+          <div className="flex flex-wrap gap-2">
+            <Skeleton className="h-6 w-20" />
+            <Skeleton className="h-6 w-24" />
+            <Skeleton className="h-6 w-16" />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!profile) {
+    return (
+      <div className="w-full bg-background p-6 text-center">
+        <p className="text-muted-foreground">Profile not found</p>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full bg-background">
@@ -59,17 +79,17 @@ export const ProfileScreen = () => {
         {/* Avatar and Stats */}
         <div className="flex items-start space-x-6">
           <Avatar className="w-20 h-20">
-            <AvatarImage src={mockUser.avatar} />
+            <AvatarImage src={profile.profile_pic_url || ""} />
             <AvatarFallback className="bg-primary text-primary-foreground text-xl font-semibold">
-              SC
+              {profile.full_name.split(' ').map(n => n[0]).join('')}
             </AvatarFallback>
           </Avatar>
 
           <div className="flex-1 space-y-3">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-xl font-bold">{mockUser.name}</h1>
-                <p className="text-muted-foreground">@{mockUser.username}</p>
+                <h1 className="text-xl font-bold">{profile.full_name}</h1>
+                <p className="text-muted-foreground">@{profile.username}</p>
               </div>
               <Button variant="ghost" size="icon">
                 <Settings className="h-5 w-5" />
@@ -79,16 +99,16 @@ export const ProfileScreen = () => {
             {/* Stats */}
             <div className="flex space-x-6">
               <div className="text-center">
-                <p className="font-semibold text-lg">{mockUser.posts}</p>
+                <p className="font-semibold text-lg">12</p>
                 <p className="text-xs text-muted-foreground">Posts</p>
               </div>
               <div className="text-center">
-                <p className="font-semibold text-lg">{mockUser.followers}</p>
-                <p className="text-xs text-muted-foreground">Followers</p>
+                <p className="font-semibold text-lg">84</p>
+                <p className="text-xs text-muted-foreground">Friends</p>
               </div>
               <div className="text-center">
-                <p className="font-semibold text-lg">{mockUser.following}</p>
-                <p className="text-xs text-muted-foreground">Following</p>
+                <p className="font-semibold text-lg">5</p>
+                <p className="text-xs text-muted-foreground">Events</p>
               </div>
             </div>
           </div>
@@ -96,34 +116,43 @@ export const ProfileScreen = () => {
 
         {/* Bio and Details */}
         <div className="space-y-3">
-          <p className="text-sm leading-relaxed">{mockUser.bio}</p>
+          {profile.bio && (
+            <p className="text-sm leading-relaxed">{profile.bio}</p>
+          )}
           
           {/* Lister Details */}
           <div className="flex flex-wrap gap-2">
-            <Badge className="bg-primary/10 text-primary border-primary/20">
-              {mockUser.role}
+            {profile.lister_role !== 'Common Resident' && (
+              <Badge className="bg-lister-gold text-lister-gold-foreground">
+                {profile.lister_role}
+                {profile.role_verified && " ✓"}
+              </Badge>
+            )}
+            <Badge variant="outline" className="flex items-center gap-1">
+              <MapPin className="h-3 w-3" />
+              {profile.tower} Tower • Floor {profile.floor}
             </Badge>
-            <Badge variant="outline">
-              {mockUser.tower} Tower • Floor {mockUser.floor}
-            </Badge>
-            <Badge variant="outline">
-              {mockUser.year} {mockUser.program}
+            <Badge variant="outline" className="flex items-center gap-1">
+              <GraduationCap className="h-3 w-3" />
+              {profile.year_of_study} {profile.program}
             </Badge>
           </div>
 
           {/* Interests */}
-          <div className="flex flex-wrap gap-2">
-            {mockUser.interests.slice(0, 4).map((interest) => (
-              <Badge key={interest} variant="secondary" className="text-xs">
-                {interest}
-              </Badge>
-            ))}
-            {mockUser.interests.length > 4 && (
-              <Badge variant="outline" className="text-xs">
-                +{mockUser.interests.length - 4} more
-              </Badge>
-            )}
-          </div>
+          {profile.interests && profile.interests.length > 0 && (
+            <div className="flex flex-wrap gap-2">
+              {profile.interests.slice(0, 4).map((interest) => (
+                <Badge key={interest} variant="secondary" className="text-xs">
+                  {interest}
+                </Badge>
+              ))}
+              {profile.interests.length > 4 && (
+                <Badge variant="outline" className="text-xs">
+                  +{profile.interests.length - 4} more
+                </Badge>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Action Buttons */}
@@ -171,28 +200,13 @@ export const ProfileScreen = () => {
       {/* Posts Grid */}
       <div className="p-1">
         {activeTab === 'posts' && (
-          <div className="grid grid-cols-3 gap-1">
-            {mockPosts.map((post) => (
-              <div key={post.id} className="relative aspect-square bg-muted group cursor-pointer">
-                <img
-                  src={post.image}
-                  alt="Post"
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                  <div className="flex items-center space-x-4 text-white">
-                    <div className="flex items-center space-x-1">
-                      <Heart className="h-5 w-5 fill-current" />
-                      <span className="text-sm font-medium">{post.likes}</span>
-                    </div>
-                    <div className="flex items-center space-x-1">
-                      <MessageCircle className="h-5 w-5 fill-current" />
-                      <span className="text-sm font-medium">{post.comments}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
+          <div className="text-center py-20">
+            <Grid className="h-16 w-16 text-muted-foreground mb-4 mx-auto" />
+            <h3 className="text-xl font-semibold mb-2">No posts yet</h3>
+            <p className="text-muted-foreground text-center mb-4">
+              Share your first Lister moment!
+            </p>
+            <Button size="sm">Create Post</Button>
           </div>
         )}
 

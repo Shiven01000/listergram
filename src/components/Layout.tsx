@@ -1,92 +1,83 @@
-import { useState } from "react";
-import { Heart, Home, Calendar, Users, User, Plus, Search, MessageCircle } from "lucide-react";
+import { ReactNode } from "react";
+import { Home, Calendar, Heart, MessageCircle, User, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/contexts/AuthContext";
+import { useToast } from "@/hooks/use-toast";
 
 interface LayoutProps {
-  children: React.ReactNode;
-  activeTab?: string;
-  onTabChange?: (tab: string) => void;
+  children: ReactNode;
+  activeTab: string;
+  onTabChange: (tab: string) => void;
 }
 
-export const Layout = ({ children, activeTab = "home", onTabChange }: LayoutProps) => {
-  const [currentTab, setCurrentTab] = useState(activeTab);
+export const Layout = ({ children, activeTab, onTabChange }: LayoutProps) => {
+  const { signOut } = useAuth();
+  const { toast } = useToast();
 
-  const handleTabChange = (tab: string) => {
-    setCurrentTab(tab);
-    onTabChange?.(tab);
-  };
-
-  const navItems = [
-    { id: "home", icon: Home, label: "Home" },
+  const tabs = [
+    { id: "feed", icon: Home, label: "Feed" },
     { id: "events", icon: Calendar, label: "Events" },
-    { id: "dating", icon: Heart, label: "Connect" },
+    { id: "connect", icon: Heart, label: "Connect" },
     { id: "messages", icon: MessageCircle, label: "Messages" },
     { id: "profile", icon: User, label: "Profile" },
   ];
 
+  const handleSignOut = async () => {
+    const { error } = await signOut();
+    if (error) {
+      toast({
+        title: "Error",
+        description: "Failed to sign out",
+        variant: "destructive"
+      });
+    } else {
+      toast({
+        title: "Signed Out",
+        description: "You've been signed out successfully"
+      });
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background">
-      {/* Mobile Container */}
-      <div className="mobile-container min-h-screen flex flex-col">
-        {/* Top Header */}
-        <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-md border-b border-border px-4 py-3">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <h1 className="text-xl font-bold bg-gradient-to-r from-primary to-lister-gold bg-clip-text text-transparent">
-                Listergram
-              </h1>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Button variant="ghost" size="icon" className="relative">
-                <Search className="h-5 w-5" />
-              </Button>
-              <Button variant="ghost" size="icon" className="relative">
-                <MessageCircle className="h-5 w-5" />
-                <span className="absolute -top-1 -right-1 bg-social-notification text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
-                  3
-                </span>
-              </Button>
-            </div>
-          </div>
-        </header>
+      {/* Header */}
+      <header className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border">
+        <div className="flex items-center justify-between p-4">
+          <h1 className="text-xl font-bold text-primary">Listergram</h1>
+          <Button variant="ghost" size="icon" onClick={handleSignOut}>
+            <LogOut className="h-5 w-5" />
+          </Button>
+        </div>
+      </header>
 
-        {/* Main Content */}
-        <main className="flex-1 overflow-hidden">
-          {children}
-        </main>
+      {/* Main Content */}
+      <main className="pt-16 pb-20">
+        {children}
+      </main>
 
-        {/* Bottom Navigation */}
-        <nav className="sticky bottom-0 z-50 bg-background/95 backdrop-blur-md border-t border-border px-2 py-2">
-          <div className="flex items-center justify-around">
-            {navItems.map((item) => {
-              const Icon = item.icon;
-              const isActive = currentTab === item.id;
-              
-              return (
-                <button
-                  key={item.id}
-                  onClick={() => handleTabChange(item.id)}
-                  className={`bottom-nav-item ${isActive ? 'active' : 'text-muted-foreground'}`}
-                >
-                  <Icon className={`h-6 w-6 transition-all duration-200 ${
-                    isActive ? 'scale-110' : 'hover:scale-105'
-                  }`} />
-                  <span className={`text-xs font-medium mt-1 ${
-                    isActive ? 'text-primary' : 'text-muted-foreground'
-                  }`}>
-                    {item.label}
-                  </span>
-                </button>
-              );
-            })}
-          </div>
-        </nav>
-
-        {/* Floating Action Button */}
-        <Button className="floating-action-btn text-white">
-          <Plus className="h-6 w-6" />
-        </Button>
-      </div>
+      {/* Bottom Navigation */}
+      <nav className="fixed bottom-0 left-0 right-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-t border-border">
+        <div className="flex">
+          {tabs.map((tab) => {
+            const Icon = tab.icon;
+            const isActive = activeTab === tab.id;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => onTabChange(tab.id)}
+                className={`flex-1 flex flex-col items-center py-2 px-1 transition-colors ${
+                  isActive
+                    ? "text-primary"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                <Icon className="h-5 w-5 mb-1" />
+                <span className="text-xs">{tab.label}</span>
+              </button>
+            );
+          })}
+        </div>
+      </nav>
     </div>
   );
 };
