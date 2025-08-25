@@ -3,8 +3,7 @@ import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useFrameworkReady } from '../hooks/useFrameworkReady';
 import { AuthProvider } from '../contexts/AuthContext';
-import 'react-native-url-polyfill/auto'
-import { useFrameworkReady } from '@/hooks/useFrameworkReady';
+import 'react-native-url-polyfill/auto';
 
 export default function RootLayout() {
   useFrameworkReady();

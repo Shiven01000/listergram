@@ -3,7 +3,6 @@
     "name": "Listergram",
     "slug": "listergram",
     "version": "1.0.0",
-    "sdkVersion": "53.0.0",
     "orientation": "portrait",
     "userInterfaceStyle": "automatic",
     "scheme": "listergram",
